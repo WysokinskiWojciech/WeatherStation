@@ -13,11 +13,11 @@ namespace WeatherStation.Server.Service
         public WeatherService()
         {
             bmp280 = Initialize();
+            bmp280.SetPowerMode(Bmx280PowerMode.Normal);
         }
 
         public Weather GetCurrentWeather()
         {
-            bmp280.SetPowerMode(Bmx280PowerMode.Forced);
             return new Weather()
             {
                 Time = DateTime.UtcNow,

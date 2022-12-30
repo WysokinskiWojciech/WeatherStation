@@ -13,34 +13,28 @@
 else
 {
     <div class="center">
-        <RadzenRadialGauge Style="width: 300px; height: 300px;">
-            <RadzenRadialGaugeScale StartAngle="-150" EndAngle="150" Step="5" Min="0" Max="40" TickPosition="GaugeTickPosition.Inside">
-                <RadzenRadialGaugeScalePointer Value=@currentWeather.Temperature Length="0.6" ShowValue=@true>
-                    <Template Context="pointer">
-                        <h4>
-                            @pointer.Value <sup>C</sup>
-                        </h4>
-                    </Template>
-                </RadzenRadialGaugeScalePointer>
-                <RadzenRadialGaugeScaleRange From="0" To="20" Fill="blue" />
-                <RadzenRadialGaugeScaleRange From="20" To="30" Fill="orange" />
-                <RadzenRadialGaugeScaleRange From="30" To="40" Fill="red" />
-            </RadzenRadialGaugeScale>
-        </RadzenRadialGauge>
-        <RadzenRadialGauge Style="width: 300px; height: 300px;">
-            <RadzenRadialGaugeScale StartAngle="-150" EndAngle="150" Step="10" Min="950" Max="1050" TickPosition="GaugeTickPosition.Inside">
-                <RadzenRadialGaugeScalePointer Value=@currentWeather.Pressure Length="0.6" ShowValue=@true>
-                    <Template Context="pointer">
-                        <h4>
-                            @pointer.Value <sup>hPa</sup>
-                        </h4>
-                    </Template>
-                </RadzenRadialGaugeScalePointer>
-                <RadzenRadialGaugeScaleRange From="950" To="1000" Fill="blue" />
-                <RadzenRadialGaugeScaleRange From="1000" To="1020" Fill="orange" />
-                <RadzenRadialGaugeScaleRange From="1020" To="1050" Fill="red" />
-            </RadzenRadialGaugeScale>
-        </RadzenRadialGauge>
+        <RadzenCard Style="margin:10px;">
+            <RadzenRadialGauge Style="width: 300px; height: 300px;">
+                <RadzenRadialGaugeScale StartAngle="-150" EndAngle="150" Step="5" Min="0" Max="40" TickPosition="GaugeTickPosition.Inside">
+                    <RadzenRadialGaugeScalePointer Value=@currentWeather.Temperature Length="0.6" ShowValue=@false />
+                    <RadzenRadialGaugeScaleRange From="0" To="20" Fill="blue" />
+                    <RadzenRadialGaugeScaleRange From="20" To="30" Fill="orange" />
+                    <RadzenRadialGaugeScaleRange From="30" To="40" Fill="red" />
+                </RadzenRadialGaugeScale>
+            </RadzenRadialGauge>
+            <RadzenText Style="text-align: center;" TextStyle="TextStyle.Body1"><b>Temperature: @currentWeather.Temperature °C</b></RadzenText>
+        </RadzenCard>
+        <RadzenCard Style="margin:10px;">
+            <RadzenRadialGauge Style="width: 300px; height: 300px;">
+                <RadzenRadialGaugeScale StartAngle="-150" EndAngle="150" Step="10" Min="950" Max="1050" TickPosition="GaugeTickPosition.Inside">
+                    <RadzenRadialGaugeScalePointer Value=@currentWeather.Pressure Length="0.6" ShowValue=@false />
+                    <RadzenRadialGaugeScaleRange From="950" To="1000" Fill="blue" />
+                    <RadzenRadialGaugeScaleRange From="1000" To="1020" Fill="orange" />
+                    <RadzenRadialGaugeScaleRange From="1020" To="1050" Fill="red" />
+                </RadzenRadialGaugeScale>
+            </RadzenRadialGauge>
+            <RadzenText Style="text-align: center;" TextStyle="TextStyle.Body1"><b>Pressure: @currentWeather.Pressure hPa</b></RadzenText>
+        </RadzenCard>
     </div>
 }
 @code
@@ -67,13 +61,14 @@ else
 <style>
     .center {
         position: fixed;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
         top: 50%;
         left: 50%;
         -webkit-transform: translate(-50%, -50%);
         transform: translate(-50%, -50%);
     }
 
-    body {
-        background-color: #87b8f5;
-    }
 </style>

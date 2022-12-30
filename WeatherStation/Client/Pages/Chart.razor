@@ -10,28 +10,59 @@
 }
 else
 {
-    <div class="w-100 p-3">
-        <RadzenChart Style="height:500px">
-            <RadzenLineSeries Smooth="true" Data="@data" CategoryProperty="@nameof(Weather.Time)" Title="Temperature [*C]" LineType="LineType.Dashed" ValueProperty="@nameof(Weather.Temperature)">
-                <RadzenMarkers MarkerType="MarkerType.Square" />
-                <RadzenSeriesDataLabels Visible="true" />
-            </RadzenLineSeries>
-            <RadzenCategoryAxis Padding="20" Formatter="@Format" />
-            <RadzenValueAxis>
-                <RadzenGridLines Visible="true" />
-            </RadzenValueAxis>
-        </RadzenChart>
-    </div>
+    <RadzenTabs RenderMode="TabRenderMode.Client">
+        <Tabs>
+            <RadzenTabsItem Text="Temperatures">
+                <div class="w-100 p-3">
+                    <RadzenChart Style="height:450px">
+                        <RadzenLineSeries Smooth="true" Data="@data" CategoryProperty="@nameof(WeatherVM.Time)" Title="Temperature [°C]" Stroke="rgba(236,72,127)" LineType="LineType.Dashed" ValueProperty="@nameof(WeatherVM.Temperature)">
+                            <RadzenMarkers MarkerType="MarkerType.Square" />
+                            <RadzenSeriesDataLabels Visible="false" />
+                        </RadzenLineSeries>
+                        <RadzenCategoryAxis Padding="20" Formatter="@Format" />
+                        <RadzenValueAxis>
+                            <RadzenGridLines Visible="true" />
+                        </RadzenValueAxis>
+                    </RadzenChart>
+                </div>
+            </RadzenTabsItem>
+            <RadzenTabsItem Text="Pressures">
+                <div class="w-100 p-3">
+                    <RadzenChart Style="height:450px">
+                        <RadzenLineSeries Smooth="true" Data="@data" CategoryProperty="@nameof(WeatherVM.Time)" Title="Pressure [hPa]" Stroke="rgba(236,72,127)" LineType="LineType.Dotted" ValueProperty="@nameof(WeatherVM.Pressure)">
+                            <RadzenMarkers MarkerType="MarkerType.Triangle" />
+                            <RadzenSeriesDataLabels Visible="false" />
+                        </RadzenLineSeries>
+                        <RadzenCategoryAxis Padding="20" Formatter="@Format" />
+                        <RadzenValueAxis>
+                            <RadzenGridLines Visible="true" />
+                        </RadzenValueAxis>
+                    </RadzenChart>
+                </div>
+            </RadzenTabsItem>
+            <RadzenDatePicker Style="margin:5px;width:200px" @bind-Value="@from" ShowTime="true" HourFormat="24" DateFormat="MM/dd/yyyy h:mm tt" />
+            <RadzenDatePicker Style="margin:5px;width:200px" @bind-Value="@to" ShowTime="true" HourFormat="24" DateFormat="MM/dd/yyyy h:mm tt" />
+            <RadzenButton Style="margin:5px;width:100px" IsBusy=@false Click=@OnClick Text="OK" ButtonStyle="ButtonStyle.Success" />
+        </Tabs>
+    </RadzenTabs>
 }
 @code {
     List<WeatherVM> data;
+    DateTime from = DateTime.Now.AddDays(-1);
+    DateTime to = DateTime.Now;
+
     protected override async Task OnInitializedAsync()
     {
         data = await GetHistoryWeather();
     }
     async Task<List<WeatherVM>> GetHistoryWeather()
     {
-        return (await http.GetFromJsonAsync<List<Weather>>($"{Configuration["WeatherApiAddress"]}api/Weather/History/{DateTime.UtcNow.AddDays(-1):u}/{DateTime.UtcNow:u}"))?.Select(x => WeatherVM.Create(x)).ToList();
+        return (await http.GetFromJsonAsync<List<Weather>>($"{Configuration["WeatherApiAddress"]}api/Weather/History/{from.ToUniversalTime():u}/{to.ToUniversalTime():u}"))?.Select(x => WeatherVM.Create(x)).ToList();
+    }
+    async Task OnClick()
+    {
+        data = await GetHistoryWeather();
+        StateHasChanged();
     }
     string Format(object value)
     {
@@ -43,3 +74,9 @@ else
         return string.Empty;
     }
 }
+<style>
+    .rz-legend-item-text
+    {
+        color:white;
+    }
+</style>
