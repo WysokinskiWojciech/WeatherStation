@@ -2,6 +2,7 @@
 @inject HttpClient http
 @using Microsoft.Extensions.Configuration
 @using System.Threading
+@using WeatherStation.Client.ViewModel
 @using WeatherStation.Shared
 @inject IConfiguration Configuration
 
@@ -26,26 +27,26 @@ else
                 <RadzenRadialGaugeScaleRange From="30" To="40" Fill="red" />
             </RadzenRadialGaugeScale>
         </RadzenRadialGauge>
-            <RadzenRadialGauge Style="width: 300px; height: 300px;">
-                <RadzenRadialGaugeScale StartAngle="-150" EndAngle="150" Step="10" Min="950" Max="1050" TickPosition="GaugeTickPosition.Inside">
-                    <RadzenRadialGaugeScalePointer Value=@currentWeather.Pressure Length="0.6" ShowValue=@true>
-                        <Template Context="pointer">
-                            <h4>
-                                @pointer.Value <sup>hPa</sup>
-                            </h4>
-                        </Template>
-                    </RadzenRadialGaugeScalePointer>
-                    <RadzenRadialGaugeScaleRange From="950" To="1000" Fill="blue" />
-                    <RadzenRadialGaugeScaleRange From="1000" To="1020" Fill="orange" />
-                    <RadzenRadialGaugeScaleRange From="1020" To="1050" Fill="red" />
-                </RadzenRadialGaugeScale>
-            </RadzenRadialGauge>
+        <RadzenRadialGauge Style="width: 300px; height: 300px;">
+            <RadzenRadialGaugeScale StartAngle="-150" EndAngle="150" Step="10" Min="950" Max="1050" TickPosition="GaugeTickPosition.Inside">
+                <RadzenRadialGaugeScalePointer Value=@currentWeather.Pressure Length="0.6" ShowValue=@true>
+                    <Template Context="pointer">
+                        <h4>
+                            @pointer.Value <sup>hPa</sup>
+                        </h4>
+                    </Template>
+                </RadzenRadialGaugeScalePointer>
+                <RadzenRadialGaugeScaleRange From="950" To="1000" Fill="blue" />
+                <RadzenRadialGaugeScaleRange From="1000" To="1020" Fill="orange" />
+                <RadzenRadialGaugeScaleRange From="1020" To="1050" Fill="red" />
+            </RadzenRadialGaugeScale>
+        </RadzenRadialGauge>
     </div>
 }
 @code
 {
- 
-    Weather? currentWeather;
+
+    WeatherVM? currentWeather;
     private System.Threading.Timer? timer;
 
     protected override async Task OnInitializedAsync()
@@ -57,20 +58,21 @@ else
         }, new System.Threading.AutoResetEvent(false), Convert.ToInt32(Configuration["TimerPeriodInMiliSeconds"]), Convert.ToInt32(Configuration["TimerPeriodInMiliSeconds"]));
     }
 
-    async Task<Weather?> GetWeather()
+    async Task<WeatherVM> GetWeather()
     {
-        return await http.GetFromJsonAsync<Weather>($"{Configuration["WeatherApiAddress"]}api/Weather/Current");
+        return WeatherVM.Create(await http.GetFromJsonAsync<Weather>($"{Configuration["WeatherApiAddress"]}api/Weather/Current"));
     }
 
 }
 <style>
-        .center {
+    .center {
         position: fixed;
         top: 50%;
         left: 50%;
         -webkit-transform: translate(-50%, -50%);
         transform: translate(-50%, -50%);
     }
+
     body {
         background-color: #87b8f5;
     }
