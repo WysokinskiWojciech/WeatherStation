@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using WeatherStation.Server.DB;
 using WeatherStation.Server.Service;
 
 namespace WeatherStation.Server
@@ -28,7 +29,7 @@ namespace WeatherStation.Server
                 services.AddSingleton<IWeatherService, RandomWeather>();
             else
                 services.AddSingleton<IWeatherService, WeatherService>();
-
+            services.AddSingleton<WeatherRepository>();
             services.AddHostedService<PeriodicReadingService>();
             services.AddControllers();
             services.AddRazorPages();

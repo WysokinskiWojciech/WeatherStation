@@ -1,7 +1,10 @@
 ﻿using LiteDB;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using WeatherStation.Shared;
 
-namespace WebApplication2.DB
+namespace WeatherStation.Server.DB
 {
     public class WeatherRepository
     {
@@ -9,12 +12,19 @@ namespace WebApplication2.DB
         private string doc = "Weather";
         public WeatherRepository()
         {
-            this.db = new LiteDatabase("Data.db");
+            this.db = new LiteDatabase("DB//Data.db");
         }
 
-        //public List<Weather> GetWeather(DateTime from, DateTime to)
-        //{
-        //return db.GetCollection<Weather>(doc).;
-        //}
+        public List<Weather> GetWeather(DateTime from, DateTime to)
+        {
+            return db.GetCollection<Weather>(doc).Find(Query.Between(nameof(Weather.Time), from, to)).ToList();
+        }
+
+        public void SaveWeather(Weather weather)
+        {
+            var col = db.GetCollection<Weather>(doc);
+            col.Insert(weather);
+            col.EnsureIndex(x => x.Id);
+        }
     }
 }
