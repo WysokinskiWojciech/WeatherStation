@@ -1,4 +1,5 @@
-﻿using WeatherStation.Shared;
+﻿using System;
+using WeatherStation.Shared;
 
 namespace WeatherStation.Client.ViewModel
 {
@@ -6,12 +7,14 @@ namespace WeatherStation.Client.ViewModel
     {
         public double Temperature { get; set; }
         public double Pressure { get; set; }
+        public DateTime Time { get; set; }
         public static WeatherVM Create(Weather weather)
         {
             return new WeatherVM()
             {
                 Pressure = weather.Pressure,
-                Temperature = weather.Temperature
+                Temperature = weather.Temperature,
+                Time=weather.Time
             };
         }
     }

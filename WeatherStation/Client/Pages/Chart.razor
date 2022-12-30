@@ -1,0 +1,45 @@
+﻿@page "/History"
+@using Microsoft.Extensions.Configuration
+@using WeatherStation.Client.ViewModel
+@inject HttpClient http
+@inject IConfiguration Configuration
+
+@if (data == null)
+{
+    <div class="loader"></div>
+}
+else
+{
+    <div class="w-100 p-3">
+        <RadzenChart Style="height:500px">
+            <RadzenLineSeries Smooth="true" Data="@data" CategoryProperty="@nameof(Weather.Time)" Title="Temperature [*C]" LineType="LineType.Dashed" ValueProperty="@nameof(Weather.Temperature)">
+                <RadzenMarkers MarkerType="MarkerType.Square" />
+                <RadzenSeriesDataLabels Visible="true" />
+            </RadzenLineSeries>
+            <RadzenCategoryAxis Padding="20" Formatter="@Format" />
+            <RadzenValueAxis>
+                <RadzenGridLines Visible="true" />
+            </RadzenValueAxis>
+        </RadzenChart>
+    </div>
+}
+@code {
+    List<WeatherVM> data;
+    protected override async Task OnInitializedAsync()
+    {
+        data = await GetHistoryWeather();
+    }
+    async Task<List<WeatherVM>> GetHistoryWeather()
+    {
+        return (await http.GetFromJsonAsync<List<Weather>>($"{Configuration["WeatherApiAddress"]}api/Weather/History/{DateTime.UtcNow.AddDays(-1):u}/{DateTime.UtcNow:u}"))?.Select(x => WeatherVM.Create(x)).ToList();
+    }
+    string Format(object value)
+    {
+        if (value != null)
+        {
+            return Convert.ToDateTime(value).ToString("dd/MM HH:mm");
+        }
+
+        return string.Empty;
+    }
+}

@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using WeatherStation.Server.DB;
 using WeatherStation.Server.Service;
 using WeatherStation.Shared;
 
@@ -8,10 +11,12 @@ namespace WeatherStation.Server.Controllers
     public class WeatherController : ControllerBase
     {
         private readonly IWeatherService weatherService;
+        private readonly WeatherRepository weatherRepository;
 
-        public WeatherController(IWeatherService weatherService)
+        public WeatherController(IWeatherService weatherService,WeatherRepository weatherRepository)
         {
             this.weatherService=weatherService;
+            this.weatherRepository = weatherRepository;
         }
 
         [HttpGet("Current")]
@@ -19,5 +24,12 @@ namespace WeatherStation.Server.Controllers
         {
             return weatherService.GetCurrentWeather();
         }
+
+        [HttpGet("History/{from}/{to}")]
+        public List<Weather> GetWeatherFromTo(DateTime from, DateTime to)
+        {
+            return weatherRepository.GetWeather(from,to);
+        }
+
     }
 }
