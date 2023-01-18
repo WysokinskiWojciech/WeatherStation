@@ -2,9 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <UserSecretsId>1a7b264f-0d6e-49d4-9426-387d4f880a4d</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dropbox.Api" Version="6.37.0" />
     <PackageReference Include="Iot.Device.Bindings" Version="2.2.0" />
     <PackageReference Include="LiteDB" Version="5.0.13" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.12" />

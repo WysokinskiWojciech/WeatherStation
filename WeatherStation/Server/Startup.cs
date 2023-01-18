@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using System.IO.Compression;
 using WeatherStation.Server.DB;
 using WeatherStation.Server.Service;
+using WeatherStation.Server.Service.Backup;
 
 namespace WeatherStation.Server
 {
@@ -33,6 +34,7 @@ namespace WeatherStation.Server
                 services.AddSingleton<IWeatherService, WeatherService>();
             services.AddSingleton<WeatherRepository>();
             services.AddHostedService<PeriodicReadingService>();
+            services.AddHostedService<BackupService>();
             services.AddControllers();
             services.AddRazorPages();
             services.AddResponseCompression(options =>
