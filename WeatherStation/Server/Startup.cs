@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.IO.Compression;
 using WeatherStation.Server.DB;
 using WeatherStation.Server.Service;
 
@@ -33,6 +35,17 @@ namespace WeatherStation.Server
             services.AddHostedService<PeriodicReadingService>();
             services.AddControllers();
             services.AddRazorPages();
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+                options.Providers.Add<GzipCompressionProvider>();
+            });
+
+            services.Configure<GzipCompressionProviderOptions>(options =>
+            {
+                options.Level = CompressionLevel.SmallestSize;
+            });
+
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(
@@ -70,6 +83,7 @@ namespace WeatherStation.Server
                 endpoints.MapControllers();
                 endpoints.MapFallbackToFile("index.html");
             });
+            app.UseResponseCompression();
         }
     }
 }

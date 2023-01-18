@@ -54,7 +54,7 @@ else
 
     async Task<WeatherVM> GetWeather()
     {
-        return WeatherVM.Create(await http.GetFromJsonAsync<Weather>($"{Configuration["WeatherApiAddress"]}api/Weather/Current"));
+        return WeatherVM.Create(await http.GetFromJsonAsync<Weather>($"api/Weather/Current"));
     }
 
 }

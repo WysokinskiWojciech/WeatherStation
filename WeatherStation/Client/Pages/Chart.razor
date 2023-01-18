@@ -57,7 +57,8 @@ else
     }
     async Task<List<WeatherVM>> GetHistoryWeather()
     {
-        return (await http.GetFromJsonAsync<List<Weather>>($"{Configuration["WeatherApiAddress"]}api/Weather/History/{from.ToUniversalTime():u}/{to.ToUniversalTime():u}"))?.Select(x => WeatherVM.Create(x)).ToList();
+        data = null;
+        return (await http.GetFromJsonAsync<List<Weather>>($"api/Weather/History/{from.ToUniversalTime():u}/{to.ToUniversalTime():u}"))?.Select(x => WeatherVM.Create(x)).ToList();
     }
     async Task OnClick()
     {
