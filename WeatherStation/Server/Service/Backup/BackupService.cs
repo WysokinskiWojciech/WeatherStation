@@ -16,15 +16,15 @@ namespace WeatherStation.Server.Service.Backup
     {
         private readonly string backupInfoFilePath;
         private readonly string dbFilePath;
-        private readonly PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromMinutes(10));
+        private readonly PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
         private readonly IConfiguration configuration;
         private int defaultIntervalInHours = 24;
         private string filename = "BackupInfo.json";
         private BackupInfo backupInfo;
         public BackupService(IConfiguration configuration, IWebHostEnvironment environment)
         {
-            this.backupInfoFilePath = $"{environment.ContentRootPath}\\Service\\Backup\\{filename}";
-            this.dbFilePath = $"{environment.ContentRootPath}\\DB\\Data.db";
+            this.backupInfoFilePath = Path.Combine(environment.ContentRootPath, "Service", "Backup", filename);
+            this.dbFilePath = Path.Combine(environment.ContentRootPath, "DB", "Data.db");
             if (!File.Exists(backupInfoFilePath))
                 File.Create(backupInfoFilePath).Close();
             this.configuration = configuration;
@@ -41,24 +41,18 @@ namespace WeatherStation.Server.Service.Backup
         }
         private string CreateCopy()
         {
-            var copy = $"{Path.GetDirectoryName(dbFilePath)}\\copy.db";
-            if (File.Exists(dbFilePath) && !File.Exists(copy))
-            {
-                File.Copy(dbFilePath, copy);
-                return copy;
-            }
+            var copy = Path.Combine(Path.GetDirectoryName(dbFilePath), "copy.db");
+            if (File.Exists(dbFilePath))
+                File.Copy(dbFilePath, copy,true);
+
             return copy;
         }
         private async Task CreateBackupAsync(string copyFilePath)
         {
-            if (!File.Exists(copyFilePath))
-            {
+            if (File.Exists(copyFilePath))
                 await UploadFileAsync(copyFilePath, new DropboxClient(configuration["DropboxToken"]));
-                File.Delete(copyFilePath);
 
-            }
-            else
-                File.Delete(copyFilePath);
+            File.Delete(copyFilePath);
         }
 
         private async Task UploadFileAsync(string copyFilePath, DropboxClient dropboxClient)
