@@ -16,7 +16,7 @@ namespace WeatherStation.Server.Service.Backup
     {
         private readonly string backupInfoFilePath;
         private readonly string dbFilePath;
-        private readonly PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
+        private readonly PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromMinutes(10));
         private readonly IConfiguration configuration;
         private int defaultIntervalInHours = 24;
         private string filename = "BackupInfo.json";
