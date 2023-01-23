@@ -3,6 +3,7 @@
 @using WeatherStation.Client.ViewModel
 @inject HttpClient http
 @inject IConfiguration Configuration
+@inject IJSRuntime JS;
 
 @if (data == null)
 {
@@ -10,7 +11,7 @@
 }
 else
 {
-    <RadzenTabs RenderMode="TabRenderMode.Client">
+    <RadzenTabs RenderMode="TabRenderMode.Client" SelectedIndex="@selectedTab" SelectedIndexChanged="OnTabChanged">
         <Tabs>
             <RadzenTabsItem Text="Temperatures">
                 <div class="w-100 p-3">
@@ -50,10 +51,12 @@ else
     List<WeatherVM> data;
     DateTime from = DateTime.Now.AddDays(-1);
     DateTime to = DateTime.Now;
-
+    int selectedTab = 0;
+    const string key = "activeTabKey";
     protected override async Task OnInitializedAsync()
     {
         data = await GetHistoryWeather();
+        int.TryParse(await JS.InvokeAsync<string>("sessionStorage.getItem", key), out selectedTab);
     }
     async Task<List<WeatherVM>> GetHistoryWeather()
     {
@@ -74,10 +77,14 @@ else
 
         return string.Empty;
     }
+    async Task OnTabChanged(int tab)
+    {
+        await JS.InvokeVoidAsync("sessionStorage.setItem", key, tab);
+    }
+
 }
 <style>
-    .rz-legend-item-text
-    {
-        color:white;
+    .rz-legend-item-text {
+        color: white;
     }
 </style>
