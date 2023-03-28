@@ -1,19 +1,18 @@
 ﻿using WeatherStation.Shared;
-using System.Device.I2c;
-using Iot.Device.Bmxx80;
-using Iot.Device.Bmxx80.PowerMode;
 using System;
+using WeatherStation.Server.Service.Sensors;
 
 namespace WeatherStation.Server.Service
 {
-    public class WeatherService: IWeatherService
+    public class WeatherService : IWeatherService
     {
-        private readonly Bmp280 bmp280;
+        private readonly Bmp280Sensor bmp280Sensor;
+        private readonly Aht20Sensor aht20Sensor;
 
         public WeatherService()
         {
-            bmp280 = Initialize();
-            bmp280.SetPowerMode(Bmx280PowerMode.Normal);
+            bmp280Sensor = new Bmp280Sensor();
+            aht20Sensor = new Aht20Sensor();
         }
 
         public Weather GetCurrentWeather()
@@ -21,27 +20,11 @@ namespace WeatherStation.Server.Service
             return new Weather()
             {
                 Time = DateTime.UtcNow,
-                Temperature = GetTemperature(),
-                Pressure = GetPressure()
+                Temperature = SensorFusionEstimator.Estimate(bmp280Sensor.GetTemperature(), bmp280Sensor.Precision,
+                                                             aht20Sensor.GetTemperature(), aht20Sensor.Precision),
+                Pressure = bmp280Sensor.GetPressure(),
+                Humidity = aht20Sensor.GetHumidity(),
             };
-        }
-        private static Bmp280 Initialize()
-        {
-            var i2cSettings = new I2cConnectionSettings(1, Bmp280.SecondaryI2cAddress);
-            var i2cDevice = I2cDevice.Create(i2cSettings);
-            return new Bmp280(i2cDevice);
-        }
-
-        private double GetPressure()
-        {
-            bmp280.TryReadPressure(out var preValue);
-            return Math.Round(preValue.Hectopascals,2);
-        }
-
-        private double GetTemperature()
-        {
-            bmp280.TryReadTemperature(out var tempValue);
-            return Math.Round(tempValue.DegreesCelsius,2);
         }
     }
 }
