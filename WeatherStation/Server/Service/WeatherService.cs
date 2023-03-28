@@ -17,13 +17,17 @@ namespace WeatherStation.Server.Service
 
         public Weather GetCurrentWeather()
         {
+            var bmp280Temp = bmp280Sensor.GetTemperature();
+            var aht20Temp = aht20Sensor.GetTemperature();
             return new Weather()
             {
                 Time = DateTime.UtcNow,
-                Temperature = SensorFusionEstimator.Estimate(bmp280Sensor.GetTemperature(), bmp280Sensor.Precision,
-                                                             aht20Sensor.GetTemperature(), aht20Sensor.Precision),
+                Temperature = SensorFusionEstimator.Estimate(bmp280Temp, bmp280Sensor.Precision,
+                                                             aht20Temp, aht20Sensor.Precision),
                 Pressure = bmp280Sensor.GetPressure(),
                 Humidity = aht20Sensor.GetHumidity(),
+                Aht20Temperature = aht20Temp,
+                Bmp280Temperature= bmp280Temp,
             };
         }
     }

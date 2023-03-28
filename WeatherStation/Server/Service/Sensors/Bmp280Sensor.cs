@@ -7,7 +7,7 @@ namespace WeatherStation.Server.Service.Sensors
     public class Bmp280Sensor : Sensor, IPrecision, ITemperature
     {
         private Bmp280 bmp280;
-        public double Precision => 0.5;
+        public double Precision => 1;
 
         public Bmp280Sensor()
         {
