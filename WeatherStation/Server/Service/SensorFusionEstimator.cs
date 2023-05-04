@@ -1,14 +1,26 @@
 ﻿using System;
+using System.Linq;
 
 namespace WeatherStation.Server.Service
 {
     public class SensorFusionEstimator
     {
-        public static double Estimate(double value1, double precision1, double value2, double precision2)
+        public static double Estimate(params double[] vals)
         {
-            var multiplier = value1 * 1 / Math.Pow(precision1, 2) + value2 * 1 / Math.Pow(precision2, 2);
-            var divider = 1 / Math.Pow(precision1, 2) + 1 / Math.Pow(precision2, 2);
-            return Math.Round(multiplier/divider,2);
+            if (vals.Count() % 2 == 0)
+            {
+                var multiplier = 0d;
+                var divider = 0d;
+
+                for (int i = 0; i < vals.Count()/2; i++)
+                {
+                    multiplier += vals[2*i] * 1 / Math.Pow(vals[2*i+1], 2);
+                    divider += 1 / Math.Pow(vals[2*i + 1], 2);
+                }
+                return Math.Round(multiplier / divider, 2);
+            }
+            else
+                throw new Exception("Invalid number of args");
         }
     }
 }
